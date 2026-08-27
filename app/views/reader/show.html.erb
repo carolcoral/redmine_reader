@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="<%= current_language %>">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= h @attachment.filename %> · <%= l(:redmine_reader_preview) %></title>
+  <%= stylesheet_link_tag 'vendor/github-dark.min', plugin: 'redmine_reader' %>
+  <%= stylesheet_link_tag 'reader', plugin: 'redmine_reader' %>
+</head>
+<body class="rr-body" data-locale="<%= current_language %>">
+  <header class="rr-toolbar">
+    <div class="rr-toolbar-left">
+      <a class="rr-back" href="javascript:history.back()" title="<%= l(:redmine_reader_back) %>">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        <span class="rr-back-label"><%= l(:redmine_reader_back) %></span>
+      </a>
+      <div class="rr-fileinfo">
+        <span class="rr-filename" title="<%= h @attachment.filename %>"><%= h @attachment.filename %></span>
+        <span class="rr-badge" id="rr-badge">—</span>
+        <span class="rr-size"><%= number_to_human_size(@attachment.filesize.to_i) %></span>
+      </div>
+    </div>
+    <div class="rr-toolbar-right">
+      <div class="rr-controls" id="rr-controls"></div>
+      <div class="rr-actions">
+        <a class="rr-btn rr-btn-primary" id="rr-download"
+           href="<%= h @download_url %>"
+           title="<%= l(:redmine_reader_download) %>"
+           download>
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          <span class="rr-btn-label"><%= l(:redmine_reader_download) %></span>
+        </a>
+        <button class="rr-btn" id="rr-print" type="button" title="<%= l(:redmine_reader_print) %>">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+          <span class="rr-btn-label"><%= l(:redmine_reader_print) %></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="rr-viewport" id="rr-viewport" tabindex="-1">
+    <div class="rr-loading" id="rr-loading" role="status">
+      <div class="rr-spinner" aria-hidden="true"></div>
+      <p class="rr-loading-text"><%= l(:redmine_reader_loading) %></p>
+    </div>
+
+    <div class="rr-error rr-hidden" id="rr-error" role="alert">
+      <div class="rr-error-card">
+        <div class="rr-error-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="44" height="44"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        </div>
+        <h1 class="rr-error-title" id="rr-error-title"><%= l(:redmine_reader_error_title) %></h1>
+        <p class="rr-error-body" id="rr-error-body"><%= l(:redmine_reader_error_body) %></p>
+        <a class="rr-btn rr-btn-primary" href="<%= h @download_url %>" download>
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          <span><%= l(:redmine_reader_download) %></span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    window.REDMINE_READER = {
+      attachmentId: <%= @attachment.id.to_json.html_safe %>,
+      filename: <%= @attachment.filename.to_json.html_safe %>,
+      filesize: <%= @attachment.filesize.to_i.to_json.html_safe %>,
+      downloadUrl: <%= @download_url.to_json.html_safe %>,
+      locale: <%= current_language.to_json.html_safe %>,
+      i18n: {
+        back:           <%= l(:redmine_reader_back).to_json.html_safe %>,
+        download:       <%= l(:redmine_reader_download).to_json.html_safe %>,
+        print:          <%= l(:redmine_reader_print).to_json.html_safe %>,
+        loading:        <%= l(:redmine_reader_loading).to_json.html_safe %>,
+        errorTitle:     <%= l(:redmine_reader_error_title).to_json.html_safe %>,
+        errorBody:      <%= l(:redmine_reader_error_body).to_json.html_safe %>,
+        unsupportedTitle: <%= l(:redmine_reader_unsupported_title).to_json.html_safe %>,
+        unsupportedBody:  <%= l(:redmine_reader_unsupported_body).to_json.html_safe %>,
+        page:           <%= l(:redmine_reader_page).to_json.html_safe %>,
+        of:             <%= l(:redmine_reader_of).to_json.html_safe %>,
+        sheet:          <%= l(:redmine_reader_sheet).to_json.html_safe %>,
+        slide:          <%= l(:redmine_reader_slide).to_json.html_safe %>,
+        zoomIn:         <%= l(:redmine_reader_zoom_in).to_json.html_safe %>,
+        zoomOut:        <%= l(:redmine_reader_zoom_out).to_json.html_safe %>,
+        fitWidth:       <%= l(:redmine_reader_fit_width).to_json.html_safe %>,
+        wrap:           <%= l(:redmine_reader_wrap).to_json.html_safe %>,
+        copyCode:       <%= l(:redmine_reader_copy_code).to_json.html_safe %>,
+        copied:         <%= l(:redmine_reader_copied).to_json.html_safe %>,
+        unknownFormat:  <%= l(:redmine_reader_unknown_format).to_json.html_safe %>
+      }
+    };
+  </script>
+  <%= javascript_include_tag 'reader', plugin: 'redmine_reader' %>
+</body>
+</html>

@@ -1,0 +1,576 @@
+/* ==========================================================================
+   Redmine Reader — reader page styles
+   Visual language: Redmine-native consistency, paper-centered layout,
+   generous whitespace, light shadow layers, subtle micro-interactions.
+   ========================================================================== */
+
+:root {
+  --rr-primary: #2B5F8E;
+  --rr-primary-light: #3A6F9E;
+  --rr-bg: #F5F6F8;
+  --rr-paper: #FFFFFF;
+  --rr-text: #333333;
+  --rr-text-muted: #6B7280;
+  --rr-border: #E2E5E9;
+  --rr-success: #2E7D32;
+  --rr-danger: #C62828;
+  --rr-warning: #B26A00;
+  --rr-radius: 10px;
+  --rr-radius-sm: 6px;
+  --rr-shadow: 0 1px 3px rgba(16, 24, 40, 0.08), 0 1px 2px rgba(16, 24, 40, 0.04);
+  --rr-shadow-hover: 0 4px 14px rgba(16, 24, 40, 0.12);
+  --rr-toolbar-h: 56px;
+  --rr-font: "Noto Sans SC", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --rr-mono: "JetBrains Mono", "Fira Code", Consolas, "Courier New", monospace;
+}
+
+* { box-sizing: border-box; }
+
+.rr-body {
+  margin: 0;
+  font-family: var(--rr-font);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--rr-text);
+  background: var(--rr-bg);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.rr-hidden { display: none !important; }
+
+/* --------------------------------------------------------------------------
+   Toolbar
+   -------------------------------------------------------------------------- */
+.rr-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: var(--rr-toolbar-h);
+  padding: 0 16px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--rr-border);
+  box-shadow: var(--rr-shadow);
+}
+
+.rr-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.rr-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border-radius: var(--rr-radius-sm);
+  color: var(--rr-primary);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.rr-back:hover { background: rgba(43, 95, 142, 0.08); transform: translateY(-1px); }
+
+.rr-fileinfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.rr-filename {
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 40vw;
+}
+
+.rr-badge {
+  flex: none;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--rr-primary);
+  background: rgba(43, 95, 142, 0.1);
+  border: 1px solid rgba(43, 95, 142, 0.18);
+}
+
+.rr-size {
+  flex: none;
+  color: var(--rr-text-muted);
+  font-size: 12px;
+}
+
+.rr-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rr-controls { display: flex; align-items: center; gap: 4px; }
+
+.rr-actions { display: flex; align-items: center; gap: 8px; }
+
+/* Buttons ---------------------------------------------------------------- */
+.rr-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border: 1px solid var(--rr-border);
+  border-radius: var(--rr-radius-sm);
+  background: var(--rr-paper);
+  color: var(--rr-text);
+  font-family: var(--rr-font);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.15s ease, box-shadow 0.15s ease,
+              background 0.15s ease, border-color 0.15s ease;
+}
+
+.rr-btn:hover { transform: translateY(-1px); box-shadow: var(--rr-shadow-hover); }
+
+.rr-btn:active { transform: translateY(0); box-shadow: none; }
+
+.rr-btn-primary {
+  background: linear-gradient(135deg, var(--rr-primary), var(--rr-primary-light));
+  border-color: var(--rr-primary);
+  color: #FFFFFF;
+}
+
+.rr-btn-primary:hover {
+  background: linear-gradient(135deg, var(--rr-primary-light), var(--rr-primary));
+  border-color: var(--rr-primary-light);
+}
+
+.rr-btn-ghost {
+  padding: 7px 9px;
+  background: transparent;
+  border-color: transparent;
+  color: var(--rr-text-muted);
+}
+
+.rr-btn-ghost:hover {
+  background: rgba(43, 95, 142, 0.07);
+  border-color: rgba(43, 95, 142, 0.15);
+  color: var(--rr-primary);
+}
+
+/* --------------------------------------------------------------------------
+   Viewport & paper
+   -------------------------------------------------------------------------- */
+.rr-viewport {
+  flex: 1;
+  overflow: auto;
+  padding: 24px 16px 48px;
+  outline: none;
+}
+
+.rr-paper {
+  margin: 0 auto;
+  background: var(--rr-paper);
+  border: 1px solid var(--rr-border);
+  border-radius: var(--rr-radius);
+  box-shadow: var(--rr-shadow);
+  overflow: hidden;
+  animation: rr-paper-in 0.25s ease both;
+}
+
+@keyframes rr-paper-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.rr-paper-md,
+.rr-paper-text { max-width: 860px; padding: 40px 48px 56px; }
+
+.rr-paper-pdf { max-width: 1080px; padding: 16px; }
+
+.rr-paper-docx { max-width: 960px; padding: 24px; }
+
+.rr-paper-excel { max-width: 1240px; padding: 0 0 8px; }
+
+.rr-paper-pptx { max-width: 1080px; padding: 24px; }
+
+/* --------------------------------------------------------------------------
+   Loading & error
+   -------------------------------------------------------------------------- */
+.rr-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 96px 24px;
+  gap: 16px;
+}
+
+.rr-spinner {
+  width: 38px;
+  height: 38px;
+  border: 3px solid rgba(43, 95, 142, 0.15);
+  border-top-color: var(--rr-primary);
+  border-radius: 50%;
+  animation: rr-spin 0.8s linear infinite;
+}
+
+@keyframes rr-spin { to { transform: rotate(360deg); } }
+
+.rr-loading-text { color: var(--rr-text-muted); font-size: 14px; }
+
+.rr-error {
+  display: flex;
+  justify-content: center;
+  padding: 64px 24px;
+}
+
+.rr-error-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  max-width: 440px;
+  padding: 40px 36px;
+  background: var(--rr-paper);
+  border: 1px solid var(--rr-border);
+  border-radius: var(--rr-radius);
+  box-shadow: var(--rr-shadow);
+}
+
+.rr-error-icon { color: var(--rr-warning); }
+
+.rr-error-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.rr-error-body {
+  margin: 0 0 12px;
+  color: var(--rr-text-muted);
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   Markdown typography (GFM)
+   -------------------------------------------------------------------------- */
+.rr-markdown-body {
+  line-height: 1.75;
+  font-size: 14px;
+  word-wrap: break-word;
+}
+
+.rr-markdown-body h1, .rr-markdown-body h2, .rr-markdown-body h3,
+.rr-markdown-body h4, .rr-markdown-body h5, .rr-markdown-body h6 {
+  margin: 1.5em 0 0.6em;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--rr-text);
+}
+
+.rr-markdown-body h1:first-child, .rr-markdown-body h2:first-child { margin-top: 0; }
+
+.rr-markdown-body h1 { font-size: 24px; padding-bottom: 0.35em; border-bottom: 1px solid var(--rr-border); }
+.rr-markdown-body h2 { font-size: 19px; padding-bottom: 0.3em; border-bottom: 1px solid var(--rr-border); }
+.rr-markdown-body h3 { font-size: 16.5px; }
+.rr-markdown-body h4 { font-size: 15px; }
+.rr-markdown-body h5 { font-size: 14px; }
+.rr-markdown-body h6 { font-size: 13px; color: var(--rr-text-muted); }
+
+.rr-markdown-body p { margin: 0.7em 0; }
+
+.rr-markdown-body a { color: var(--rr-primary); text-decoration: none; }
+.rr-markdown-body a:hover { text-decoration: underline; color: var(--rr-primary-light); }
+
+.rr-markdown-body strong { font-weight: 600; }
+
+.rr-markdown-body ul, .rr-markdown-body ol { padding-left: 1.6em; margin: 0.6em 0; }
+
+.rr-markdown-body li { margin: 0.25em 0; }
+
+.rr-markdown-body li > input[type="checkbox"] {
+  margin-right: 0.45em;
+  accent-color: var(--rr-primary);
+  vertical-align: -2px;
+}
+
+.rr-markdown-body li:has(> input[type="checkbox"]) { list-style: none; margin-left: -1.2em; }
+
+.rr-markdown-body blockquote {
+  margin: 1em 0;
+  padding: 0.4em 1.1em;
+  border-left: 4px solid var(--rr-primary-light);
+  background: rgba(43, 95, 142, 0.05);
+  border-radius: 0 var(--rr-radius-sm) var(--rr-radius-sm) 0;
+  color: var(--rr-text-muted);
+}
+
+.rr-markdown-body blockquote p { margin: 0.35em 0; }
+
+.rr-markdown-body hr { border: 0; border-top: 1px solid var(--rr-border); margin: 1.8em 0; }
+
+.rr-markdown-body img { max-width: 100%; border-radius: var(--rr-radius-sm); }
+
+.rr-markdown-body code {
+  font-family: var(--rr-mono);
+  font-size: 0.9em;
+  background: rgba(43, 95, 142, 0.07);
+  color: var(--rr-danger);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+}
+
+.rr-markdown-body pre {
+  position: relative;
+  margin: 1.1em 0;
+  padding: 14px 16px;
+  background: #0d1117;
+  border-radius: var(--rr-radius-sm);
+  overflow-x: auto;
+}
+
+.rr-markdown-body pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.rr-table-wrap { overflow-x: auto; margin: 1.1em 0; }
+
+.rr-markdown-body table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 13.5px;
+}
+
+.rr-markdown-body th, .rr-markdown-body td {
+  border: 1px solid var(--rr-border);
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.rr-markdown-body thead th {
+  background: rgba(43, 95, 142, 0.06);
+  font-weight: 600;
+}
+
+.rr-markdown-body tbody tr:nth-child(even) { background: rgba(43, 95, 142, 0.025); }
+
+/* Copy button on code blocks ---------------------------------------------- */
+.rr-copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 3px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #c9d1d9;
+  font-family: var(--rr-font);
+  font-size: 11px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease,
+              border-color 0.15s ease;
+}
+
+.rr-markdown-body pre:hover .rr-copy-btn { opacity: 1; }
+
+.rr-copy-btn:hover { background: rgba(255, 255, 255, 0.16); }
+
+.rr-copy-btn.rr-copy-ok {
+  color: #7ee2a8;
+  border-color: rgba(126, 226, 168, 0.5);
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Plain text
+   -------------------------------------------------------------------------- */
+.rr-text-pre {
+  margin: 0;
+  font-family: var(--rr-mono);
+  font-size: 13px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--rr-text);
+}
+
+.rr-text-pre.rr-nowrap { white-space: pre; overflow-x: auto; }
+
+/* --------------------------------------------------------------------------
+   PDF
+   -------------------------------------------------------------------------- */
+.rr-pdf-page-wrap {
+  position: relative;
+  margin: 0 auto 18px;
+  border-radius: var(--rr-radius-sm);
+  box-shadow: var(--rr-shadow);
+  overflow: hidden;
+  background: #FFFFFF;
+}
+
+.rr-pdf-page { display: block; }
+
+.rr-pdf-page-label {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: 2px 10px;
+  font-size: 11px;
+  color: var(--rr-text-muted);
+  background: rgba(255, 255, 255, 0.88);
+  border-top-left-radius: var(--rr-radius-sm);
+}
+
+/* --------------------------------------------------------------------------
+   Excel
+   -------------------------------------------------------------------------- */
+.rr-sheet-bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 12px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--rr-border);
+  background: rgba(43, 95, 142, 0.03);
+  scrollbar-width: thin;
+}
+
+.rr-sheet-tab {
+  flex: none;
+  padding: 6px 14px;
+  border: 1px solid var(--rr-border);
+  border-radius: 999px;
+  background: var(--rr-paper);
+  color: var(--rr-text-muted);
+  font-family: var(--rr-font);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.rr-sheet-tab:hover { color: var(--rr-primary); border-color: rgba(43, 95, 142, 0.4); transform: translateY(-1px); }
+
+.rr-sheet-tab.rr-active {
+  background: linear-gradient(135deg, var(--rr-primary), var(--rr-primary-light));
+  border-color: var(--rr-primary);
+  color: #FFFFFF;
+}
+
+.rr-sheet-host { overflow: auto; max-height: calc(100vh - var(--rr-toolbar-h) - 140px); }
+
+.rr-sheet-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 13px;
+}
+
+.rr-sheet-table th, .rr-sheet-table td {
+  border: 1px solid var(--rr-border);
+  padding: 6px 12px;
+  text-align: left;
+  white-space: nowrap;
+  max-width: 420px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rr-sheet-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: rgba(43, 95, 142, 0.08);
+  font-weight: 600;
+}
+
+.rr-sheet-table tbody tr:nth-child(even) { background: rgba(43, 95, 142, 0.02); }
+
+.rr-sheet-note { padding: 10px 14px; color: var(--rr-text-muted); font-size: 12px; }
+
+/* --------------------------------------------------------------------------
+   PPTX
+   -------------------------------------------------------------------------- */
+.rr-pptx-container { margin: 0 auto; }
+
+.rr-pptx-container img { max-width: 100%; }
+
+/* --------------------------------------------------------------------------
+   Scrollbars
+   -------------------------------------------------------------------------- */
+.rr-viewport::-webkit-scrollbar,
+.rr-sheet-host::-webkit-scrollbar,
+.rr-table-wrap::-webkit-scrollbar { width: 10px; height: 10px; }
+
+.rr-viewport::-webkit-scrollbar-thumb,
+.rr-sheet-host::-webkit-scrollbar-thumb,
+.rr-table-wrap::-webkit-scrollbar-thumb {
+  background: rgba(43, 95, 142, 0.25);
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.rr-viewport::-webkit-scrollbar-thumb:hover { background: rgba(43, 95, 142, 0.45); background-clip: content-box; }
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+@media (max-width: 720px) {
+  .rr-btn-label, .rr-back-label, .rr-size { display: none; }
+
+  .rr-filename { max-width: 46vw; }
+
+  .rr-paper-md, .rr-paper-text { padding: 22px 18px 36px; }
+
+  .rr-toolbar { padding: 0 10px; }
+
+  .rr-viewport { padding: 12px 8px 32px; }
+}
+
+/* --------------------------------------------------------------------------
+   Print — the document only
+   -------------------------------------------------------------------------- */
+@media print {
+  .rr-toolbar, .rr-controls, .rr-actions, .rr-copy-btn { display: none !important; }
+
+  .rr-body { background: #FFFFFF; }
+
+  .rr-viewport { overflow: visible; padding: 0; }
+
+  .rr-paper {
+    max-width: none;
+    margin: 0;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .rr-sheet-host { max-height: none; overflow: visible; }
+}

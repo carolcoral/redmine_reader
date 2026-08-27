@@ -1,0 +1,13 @@
+# 依赖与构建产物
+node_modules/
+dist/
+build/
+*.log
+
+# IDE / 系统文件（保留 .codebuddy 记忆体，不忽略）
+.idea/
+.vscode/
+.DS_Store
+
+# 注意：.codebuddy/ 是 CodeBuddy 记忆体，必须跟随 git 持久化，禁止加入忽略规则
+!.codebuddy/

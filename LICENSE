@@ -1,0 +1,31 @@
+Redmine Reader plugin
+Copyright (C) 2026 xindu.site
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2 of the License, or (at your
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+
+Full license text: https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+
+This project bundles the following third-party assets (under their own
+licenses, located under assets/javascripts/vendor and
+assets/stylesheets/vendor):
+
+- pdfjs-dist  (Apache-2.0)        - pdf.min.js, pdf.worker.min.js
+- docx-preview (Apache-2.0)       - docx-preview.min.js
+- jszip       (MIT)               - jszip.min.js
+- SheetJS xlsx (Apache-2.0)       - xlsx.full.min.js
+- marked      (MIT)               - marked.min.js
+- DOMPurify   (Apache-2.0/MPL-2.0)- purify.min.js
+- highlight.js(BSD-3-Clause)       - highlight.min.js, github-dark.min.css
+- pptx-preview(MIT)               - pptx-preview.min.js
