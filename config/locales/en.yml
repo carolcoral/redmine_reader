@@ -13,6 +13,8 @@ en:
     of: "of"
     sheet: "Sheet"
     slide: "Slide"
+    prev_slide: "Previous slide"
+    next_slide: "Next slide"
     zoom_in: "Zoom in"
     zoom_out: "Zoom out"
     fit_width: "Fit width"

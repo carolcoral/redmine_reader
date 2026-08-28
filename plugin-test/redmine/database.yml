@@ -1,0 +1,10 @@
+# PostgreSQL connection for the Redmine test container (production env).
+# Mounted read-only at /usr/src/redmine/config/database.yml.
+production:
+  adapter: postgresql
+  host: db
+  port: 5432
+  username: redmine
+  password: redmine
+  database: redmine
+  encoding: utf8

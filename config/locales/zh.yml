@@ -13,6 +13,8 @@ zh:
     of: "/"
     sheet: "工作表"
     slide: "幻灯片"
+    prev_slide: "上一张"
+    next_slide: "下一张"
     zoom_in: "放大"
     zoom_out: "缩小"
     fit_width: "适应宽度"
