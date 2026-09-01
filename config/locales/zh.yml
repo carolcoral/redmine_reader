@@ -21,3 +21,4 @@ zh:
     file_not_found: "附件不存在。"
     access_denied: "您没有权限预览该附件。"
     unknown_format: "此文件类型暂不支持预览。"
+    pptx_error: "PPTX 预览组件加载失败，请确认插件静态资源已同步（redmine:plugins:assets）后重试，或下载后查看。"

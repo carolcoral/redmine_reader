@@ -102,6 +102,43 @@ rm -rf /opt/redmine/public/plugin_assets/redmine_reader
 
 静态资源全部自托管（`assets/javascripts/vendor/`），运行时不依赖外部 CDN。
 
+## 常见问题
+
+### PPTX（或其它格式）预览失败，页面报「无法预览」
+
+优先检查 **部署同步**——插件代码改动后，`public/plugin_assets/` 与
+locale 都需要重新同步，否则浏览器会加载到旧版/缺失的脚本：
+
+```bash
+cd /opt/redmine
+RAILS_ENV=production bundle exec rake redmine:plugins:assets
+systemctl restart redmine   # 或您的进程管理方式
+```
+
+若同步后仍失败，请打开浏览器开发者工具（Console）确认：
+
+1. 控制台是否出现 `Failed to load resource .../vendor/pptx-preview.min.js`？
+   说明该文件未拷贝到 `public/plugin_assets/redmine_reader/`，重复上面的同步命令。
+2. 是否出现 `pptxPreview is not defined` / `Cannot read properties of undefined (reading 'init')`？
+   说明 `assets/javascripts/vendor/pptx-preview.min.js` 是无效构建（例如被替换成了
+   ES Module 格式，而经典 `<script>` 无法解析 `export`）。插件已内置对
+   ES Module 构建的动态 `import()` 兜底，若仍失败请用官方 UMD 构建替换该文件：
+
+   ```bash
+   cd /opt/redmine/plugins/redmine_reader
+   curl -L -o assets/javascripts/vendor/pptx-preview.min.js \
+     https://unpkg.com/pptx-preview@1.0.7/dist/pptx-preview.umd.js
+   # 重新同步并重启
+   cd /opt/redmine && RAILS_ENV=production bundle exec rake redmine:plugins:assets
+   systemctl restart redmine
+   ```
+
+   官方 UMD 构建（约 1.3 MB）将全局对象暴露为 `window.pptxPreview`，
+   与 `reader.js` 中的调用方式一致。
+
+3. 若页面显示 `Translation missing: zh.redmine_reader.back` 之类的字样，
+   说明 Redmine 进程还在使用旧版 locale，重启 Redmine 即可。
+
 ## 运行测试
 
 在 Redmine 根目录：

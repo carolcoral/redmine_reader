@@ -437,11 +437,53 @@
   //
   // The public API is intentionally minimal: init(container, {width,height})
   // returns an instance, and instance.preview(arrayBuffer) returns a
-  // Promise that resolves once rendering is complete.  Built-in slide
+  // Promise that resolves once rendering is complete. Built-in slide
   // controls rendered by the library are left visible.
+  //
+  // The vendored build may be either a classic UMD script (exposes
+  // window.pptxPreview) or an ES-module bundle. loadPptxLib() tries both
+  // and raises a descriptive error when neither yields the init factory.
   // ------------------------------------------------------------------
+  var PPTX_SRC = VENDOR + 'pptx-preview.min.js';
+
+  function pickPptxInit(lib) {
+    if (!lib) { return null; }
+    if (typeof lib.init === 'function') { return lib.init; }
+    if (lib.default && typeof lib.default.init === 'function') { return lib.default.init; }
+    return null;
+  }
+
+  function importPptxModule() {
+    return import(PPTX_SRC).then(function (mod) {
+      var init = pickPptxInit(mod);
+      if (!init) { throw new Error('module did not export init'); }
+      return init;
+    });
+  }
+
+  function loadPptxLib() {
+    return loadScript(PPTX_SRC).then(function () {
+      if (window.pptxPreview && typeof window.pptxPreview.init === 'function') {
+        return window.pptxPreview.init;
+      }
+      // Classic script loaded but the global factory is absent — the file is
+      // probably an ES-module bundle; try importing it as a module.
+      return importPptxModule();
+    }).catch(function (err) {
+      // Classic <script> load failed (e.g. the file is an ES module and the
+      // browser rejected `export` in a classic script). Fall back to dynamic
+      // import before giving up.
+      return importPptxModule().catch(function (err2) {
+        var detail = [err && err.message, err2 && err2.message]
+          .filter(Boolean).join(' / ');
+        throw new Error((t('pptxError', 'PPTX preview component failed to load') || '') +
+          (detail ? ' (' + detail + ')' : ''));
+      });
+    });
+  }
+
   function renderPptx(buf) {
-    return loadScript(VENDOR + 'pptx-preview.min.js').then(function () {
+    return loadPptxLib().then(function (init) {
       var paper = paperEl('rr-paper-pptx');
       var container = document.createElement('div');
       container.className = 'rr-pptx-container';
@@ -449,11 +491,7 @@
 
       var width = Math.max(320, Math.min(1080, viewport.clientWidth - 48));
       var height = Math.round(width * 0.5625); // 16:9
-      var previewer = window.pptxPreview.init(container, {
-        width: width,
-        height: height
-      });
-
+      var previewer = init(container, { width: width, height: height });
       return previewer.preview(buf);
     });
   }

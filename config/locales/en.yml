@@ -21,3 +21,4 @@ en:
     file_not_found: "Attachment not found."
     access_denied: "You are not allowed to preview this attachment."
     unknown_format: "This file type cannot be previewed."
+    pptx_error: "The PPTX preview component failed to load. Please re-sync plugin assets (redmine:plugins:assets) and retry, or download the file."
