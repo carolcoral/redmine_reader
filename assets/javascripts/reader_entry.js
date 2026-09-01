@@ -1,9 +1,9 @@
 /*
  * Redmine Reader — global entry script.
  *
- * Rewrites supported attachment links (/attachments/download/:id/:filename)
- * so that clicking them opens the reader page (/reader/:id) instead of
- * downloading. Left click, middle click, "open in new tab" and
+ * Rewrites supported attachment links (/attachments/:id/:filename and
+ * /attachments/download/:id/:filename) so that clicking them opens the
+ * reader page (/reader/:id) instead of Redmine's native preview/download. Left click, middle click, "open in new tab" and
  * "copy link address" all lead to the preview page.
  *
  * - Idempotent: rewritten links are flagged with data-download-url.
@@ -27,8 +27,10 @@
     pptx: 1
   };
 
-  // /attachments/download/:id/:filename — with optional query/hash parts.
-  var ATTACHMENT_RE = /^(?:https?:\/\/[^\/?#]+)?\/attachments\/download\/(\d+)(?:\/([^\/?#]*))?([^#]*)?/;
+  // Match both Redmine preview links (/attachments/:id/:filename) and legacy
+  // download links (/attachments/download/:id/:filename).  Thumbnail routes
+  // are ignored by the pattern.
+  var ATTACHMENT_RE = /^(?:https?:\/\/[^\/?#]+)?\/attachments\/(?:(download)\/(\d+)(?:\/([^\/?#]*))?|(\d+)(?:\/([^\/?#]*))?)((?:\?[^#]*)?(?:#.*)?)?$/;
 
   function extOf(name) {
     if (!name) { return ''; }
@@ -48,6 +50,7 @@
   function isExplicitDownloadLink(a) {
     // Links that are clearly meant as "download" affordances (icon-only or
     // marked download buttons) keep their native behavior.
+    if (a.hasAttribute && a.hasAttribute('download')) { return true; }
     var cls = a.getAttribute('class') || '';
     if (/(^|\s)(icon-only|icon-download|attachment-download)(\s|$)/.test(cls)) { return true; }
     var iconCount = a.querySelectorAll('img, svg, i').length;
@@ -57,19 +60,22 @@
 
   function rewrite(root) {
     root = root && root.querySelectorAll ? root : document;
-    var links = root.querySelectorAll('a[href*="/attachments/download/"]');
+    var links = root.querySelectorAll('a[href*="/attachments/"]');
     for (var i = 0; i < links.length; i++) {
       var a = links[i];
       if (a.getAttribute('data-download-url')) { continue; } // already rewritten
       var href = a.getAttribute('href') || '';
       var m = href.match(ATTACHMENT_RE);
       if (!m) { continue; }
-      var id = m[1];
+      var isDownloadRoute = m[1] === 'download';
+      var id = isDownloadRoute ? m[2] : m[4];
       if (!id) { continue; }
-      if (isExplicitDownloadLink(a)) { continue; }
+      // Never rewrite explicit download buttons, even when they share the
+      // /attachments/download/... URL pattern.
+      if (isDownloadRoute && isExplicitDownloadLink(a)) { continue; }
 
       var filename = '';
-      try { filename = decodeURIComponent(m[2] || ''); } catch (e) { filename = m[2] || ''; }
+      try { filename = decodeURIComponent(m[3] || m[5] || ''); } catch (e) { filename = m[3] || m[5] || ''; }
       filename = filename || queryParam(href, 'filename') || (a.textContent || '').trim();
       var ext = extOf(filename);
       if (!WHITELIST[ext]) { continue; }

@@ -123,8 +123,7 @@
   var SVG_MINUS = '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M19 13H5v-2h14v2z"/></svg>';
   var SVG_FIT = '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M3 3h6v2H5v4H3V3zm12 0h6v6h-2V5h-4V3zM3 15h2v4h4v2H3v-6zm16 0h2v6h-6v-2h4v-4z"/></svg>';
   var SVG_WRAP = '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M4 19h6v-2H4v2zM20 5H4v2h16V5zm-3 6H4v2h13.25c1.1 0 2 .9 2 2s-.9 2-2 2H15v-2l-3 3 3 3v-2h2c2.21 0 4-1.79 4-4s-1.79-4-4-4z"/></svg>';
-  var SVG_PREV = '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>';
-  var SVG_NEXT = '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>';
+
 
   // ------------------------------------------------------------------
   // Markdown renderer (marked -> DOMPurify -> highlight.js)
@@ -436,10 +435,10 @@
   // ------------------------------------------------------------------
   // PPTX renderer (pptx-preview)
   //
-  // Use mode: 'slide' (one slide at a time) so the content never overflows
-  // the paper container horizontally. The library's built-in next/prev/
-  // pagination widgets are visually hidden via CSS (see .rr-paper-pptx
-  // styles) and replaced by our own i18n-aware controls in the toolbar.
+  // The public API is intentionally minimal: init(container, {width,height})
+  // returns an instance, and instance.preview(arrayBuffer) returns a
+  // Promise that resolves once rendering is complete.  Built-in slide
+  // controls rendered by the library are left visible.
   // ------------------------------------------------------------------
   function renderPptx(buf) {
     return loadScript(VENDOR + 'pptx-preview.min.js').then(function () {
@@ -448,36 +447,14 @@
       container.className = 'rr-pptx-container';
       paper.appendChild(container);
 
-      var width = Math.max(320, Math.min(960, viewport.clientWidth - 48));
+      var width = Math.max(320, Math.min(1080, viewport.clientWidth - 48));
       var height = Math.round(width * 0.5625); // 16:9
       var previewer = window.pptxPreview.init(container, {
         width: width,
-        height: height,
-        mode: 'slide'
+        height: height
       });
 
-      return previewer.preview(buf).then(function (pptx) {
-        var total = (pptx && pptx.slides) ? pptx.slides.length : (previewer.slideCount || 0);
-
-        var label = document.createElement('span');
-        label.className = 'rr-pptx-label';
-        controls.appendChild(label);
-        function refreshLabel() {
-          var cur = (previewer.currentIndex || 0) + 1;
-          label.textContent = t('slide', 'Slide') + ' ' + cur + ' ' + t('of', '/') + ' ' + total;
-        }
-
-        makeControlBtn(t('prevSlide', 'Previous slide'), SVG_PREV, '', function () {
-          previewer.renderPreSlide();
-          refreshLabel();
-        });
-        makeControlBtn(t('nextSlide', 'Next slide'), SVG_NEXT, '', function () {
-          previewer.renderNextSlide();
-          refreshLabel();
-        });
-
-        refreshLabel();
-      });
+      return previewer.preview(buf);
     });
   }
 

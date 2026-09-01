@@ -1,2 +1,5 @@
 <%# Entry script: rewrites supported attachment links site-wide (Turbo aware, idempotent). %>
 <%= javascript_include_tag 'reader_entry', plugin: 'redmine_reader' %>
+<%# Suppress Redmine's native "Open in full view" attachment-preview button;
+    redmine_reader provides its own preview page. %>
+<style>#content .icon-maximize { display: none !important; }</style>
