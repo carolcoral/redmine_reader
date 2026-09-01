@@ -17,7 +17,14 @@
   var cfg = window.REDMINE_READER;
   if (!cfg) { return; }
   var i18n = cfg.i18n || {};
-  var t = function (key, fallback) { return i18n[key] || fallback || key; };
+  function t(key, fallback) {
+    var v = i18n[key];
+    // If Rails locale files are not loaded, the injected value is literally
+    // "Translation missing: zh.redmine_reader.xxx". Fall back to the provided
+    // default text in that case so the UI stays readable.
+    if (typeof v === 'string' && !/^Translation missing:/i.test(v)) { return v; }
+    return fallback || key;
+  }
 
   var ASSETS = '/plugin_assets/redmine_reader/';
   var VENDOR = ASSETS + 'javascripts/vendor/';
